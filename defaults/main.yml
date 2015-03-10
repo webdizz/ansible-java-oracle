@@ -1,0 +1,15 @@
+---
+# Default Java distribution.
+#   Go for the JDK here in favor of a JRE only.
+#   Choices:
+#   - jdk
+#   - jre
+java_oracle_distribution: 'jdk'
+
+java_oracle_version: 8u40
+java_oracle_build_version: b25
+java_oracle_url: http://download.oracle.com/otn-pub/java/jdk/{{ java_oracle_version }}-{{ java_oracle_build_version }}/{{ java_oracle_distribution }}-{{ java_oracle_version }}-linux-x64.tar.gz
+
+java_oracle_md5_checksum:
+  jdk: 159a3186bb88b77b4eb9ff9971222736
+  jre: 394d5dbd541691413e5b8d01f2e720d6

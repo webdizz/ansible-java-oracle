@@ -1,0 +1,27 @@
+---
+# Tasks related to download of Oracle Java distribution
+#
+
+- name: Download Java from Oracle
+  tags: java
+  register: java_archive
+  uri: url={{ java_oracle_url }}
+       creates=/tmp/{{ java_oracle_distribution }}-{{ java_oracle_version }}-linux-x64.tar.gz
+       HEADER_Cookie='oraclelicense=accept-securebackup-cookie'
+
+- debug:
+    msg=Debug download information
+    var=java_archive
+  when: java_archive.changed == true
+
+- name: Check downloaded file
+  tags: java
+  stat: path=/tmp/{{ java_oracle_distribution }}-{{ java_oracle_version }}-linux-x64.tar.gz
+  register: java_checksum
+
+- debug:
+    var=java_checksum
+  when: java_archive.changed == true
+
+- fail: msg="Whoops! Downloaded distribution checksum mismatch"
+  when: java_checksum.stat.md5 != java_oracle_md5_checksum[java_oracle_distribution]

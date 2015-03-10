@@ -5,3 +5,11 @@ centos7:
   environment:
     - ANSIBLE_CONFIG=/roles/java-oracle/tests/ansible.cfg
   command: ansible-playbook -i /roles/java-oracle/tests/hosts /roles/java-oracle/tests/playbook.yml
+
+ubuntu14:
+  image: ansible/ubuntu14.04-ansible
+  volumes:
+    - .:/roles/java-oracle
+  environment:
+    - ANSIBLE_CONFIG=/roles/java-oracle/tests/ansible.cfg
+  command: ansible-playbook -i /roles/java-oracle/tests/hosts /roles/java-oracle/tests/playbook.yml

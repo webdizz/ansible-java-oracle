@@ -2,26 +2,44 @@
 # Tasks related to download of Oracle Java distribution
 #
 
+- name: Ensure Java download directory exists
+  tags: java
+  file:
+    state=directory
+    mode=0755
+    dest={{ java_oracle_download_dir }}
+    recurse=yes
+
+- name: Check whether distribution was downloaded
+  stat: path={{ java_oracle_download_dir }}/{{ java_oracle_distribution }}-{{ java_oracle_version }}-linux-x64.tar.gz
+  register: downloaded_distribution
+
+- name: Remove previous unsuccessful download
+  file: path={{ java_oracle_download_dir }}/{{ java_oracle_distribution }}-{{ java_oracle_version }}-linux-x64.tar.gz
+        state=absent
+  when: downloaded_distribution.stat.md5 != java_oracle_md5_checksum[java_oracle_distribution]
+
 - name: Download Java from Oracle
   tags: java
   register: java_archive
   uri: url={{ java_oracle_url }}
-       creates=/tmp/{{ java_oracle_distribution }}-{{ java_oracle_version }}-linux-x64.tar.gz
+       dest={{ java_oracle_download_dir }}
        HEADER_Cookie='oraclelicense=accept-securebackup-cookie'
+  when: downloaded_distribution.stat.exists == False
 
 - debug:
     msg=Debug download information
     var=java_archive
-  when: java_archive.changed == true
+  when: java_archive.changed == True
 
 - name: Check downloaded file
   tags: java
-  stat: path=/tmp/{{ java_oracle_distribution }}-{{ java_oracle_version }}-linux-x64.tar.gz
+  stat: path={{ java_oracle_download_dir }}/{{ java_oracle_distribution }}-{{ java_oracle_version }}-linux-x64.tar.gz
   register: java_checksum
 
 - debug:
     var=java_checksum
-  when: java_archive.changed == true
+  when: java_archive.changed == True
 
 - fail: msg="Whoops! Downloaded distribution checksum mismatch"
   when: java_checksum.stat.md5 != java_oracle_md5_checksum[java_oracle_distribution]

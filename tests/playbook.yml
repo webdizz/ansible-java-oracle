@@ -1,4 +1,11 @@
 ---
 - hosts: all
+  pre_tasks:
+    - name: Ensure required packages instaled
+      yum: pkg={{ item }} state=present
+      with_items:
+        - unzip
+        - tar
+      when: ansible_os_family == 'RedHat'
   roles:
     - java-oracle

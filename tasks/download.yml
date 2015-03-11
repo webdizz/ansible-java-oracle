@@ -17,7 +17,7 @@
 - name: Remove previous unsuccessful download
   file: path={{ java_oracle_download_dir }}/{{ java_oracle_distribution }}-{{ java_oracle_version }}-linux-x64.tar.gz
         state=absent
-  when: downloaded_distribution.stat.md5 != java_oracle_md5_checksum[java_oracle_distribution]
+  when: downloaded_distribution.stat.exists and downloaded_distribution.stat.md5 != java_oracle_md5_checksum[java_oracle_distribution]
 
 - name: Download Java from Oracle
   tags: java

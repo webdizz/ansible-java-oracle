@@ -1,0 +1,41 @@
+---
+# Tasks related to installation of Oracle Java distribution
+#
+
+- name: Ensure Java installation directory exists
+  tags: java
+  file: path={{ java_oracle_install_dir }}
+        state=directory
+        mode=0755
+
+- name: Check whether distribution installation exists
+  stat: path={{ java_oracle_install_dir }}/{{ java_oracle_distribution }}
+  register: distribution_installation
+
+- name: Unarchive Java distribution
+  tags: java
+  register: unarchived_distribution
+  unarchive: dest={{ java_oracle_install_dir }}
+        src={{ java_oracle_download_dir }}/{{ java_oracle_distribution }}-{{ java_oracle_version }}-linux-x64.tar.gz
+        copy=no
+  when: distribution_installation.stat.exists == False
+
+- debug: var=unarchived_distribution
+
+- name: Symlink unarchived distribution to installation path
+  tags: java
+  file:
+        src={{ java_oracle_install_dir }}/{{ unarchived_distribution.check_results.out.split('\n')[0].rstrip('/') }}
+        state=link
+        force=true
+        dest={{ java_oracle_install_dir }}/{{ java_oracle_distribution }}
+  when: unarchived_distribution.changed and distribution_installation.stat.exists == False and unarchived_distribution.check_results.err == ''
+
+- name: Symlink unarchived distribution to installation path from error output
+  tags: java
+  file:
+        src={{ java_oracle_install_dir }}/{{ unarchived_distribution.check_results.err.split('\n')[0].split('tar:')[1].split(':')[0] | trim }}
+        state=link
+        force=true
+        dest={{ java_oracle_install_dir }}/{{ java_oracle_distribution }}
+  when: unarchived_distribution.changed and distribution_installation.stat.exists == False and unarchived_distribution.check_results.out == ''

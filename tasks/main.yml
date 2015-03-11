@@ -12,3 +12,7 @@
 - include: download.yml
   tags:
     - java
+
+- include: install.yml
+  tags:
+    - java

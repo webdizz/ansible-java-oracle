@@ -14,5 +14,5 @@ java_oracle_md5_checksum:
   jdk: 159a3186bb88b77b4eb9ff9971222736
   jre: 394d5dbd541691413e5b8d01f2e720d6
 
-java_oracle_install_dir: /app/tools/oracle
-java_oracle_download_dir: /app/tools/oracle/_downloads
+java_oracle_install_dir: /app/tools
+java_oracle_download_dir: /app/tools/_downloads
